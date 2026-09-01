@@ -8,11 +8,13 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserCreateDto } from './dtos/user-creat.dto';
 import { UserUpdate } from './dtos/user-apdate.dto';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
   ) {}
   public async getAll() {
     return await this.userRepository.find();
@@ -30,7 +32,9 @@ export class UsersService {
       userRole,
     });
     newUser = await this.userRepository.save(newUser);
-    return newUser;
+    const payload = { id: newUser.id, userRole: newUser.userRole };
+    const token = await this.jwtService.sign(payload);
+    return { user: newUser, token };
   }
   public async getByOne(id: number) {
     const user = await this.userRepository.findOne({ where: { id } });

@@ -8,6 +8,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { TripCreat } from './dtos/trip-creat.dto';
 import { TripStatus } from './tripstatus';
+import { UserRole } from '../users/dtos/userrole';
 @Injectable()
 export class TripsService {
   constructor(
@@ -27,7 +28,11 @@ export class TripsService {
   }
   public async accept(tripId: number, driverId: number) {
     const trip = await this.getByOne(tripId);
-    if (trip.tripstatus !== TripStatus.CREATED) {
+    if (
+      !UserRole.ADMIN &&
+      !UserRole.DRIVER &&
+      trip.tripstatus !== TripStatus.CREATED
+    ) {
       throw new BadRequestException('');
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -37,7 +42,11 @@ export class TripsService {
   }
   public async reject(tripId: number, driverId: number) {
     const trip = await this.getByOne(tripId);
-    if (trip.tripstatus !== TripStatus.CREATED) {
+    if (
+      !UserRole.ADMIN &&
+      !UserRole.DRIVER &&
+      trip.tripstatus !== TripStatus.CREATED
+    ) {
       throw new BadRequestException('');
     }
     trip.driver = { id: driverId };
@@ -46,7 +55,11 @@ export class TripsService {
   }
   public async arrive(tripId: number, driverId: number) {
     const trip = await this.getByOne(tripId);
-    if (trip.tripstatus !== TripStatus.ACCEPTED) {
+    if (
+      !UserRole.ADMIN &&
+      !UserRole.DRIVER &&
+      trip.tripstatus !== TripStatus.ACCEPTED
+    ) {
       throw new BadRequestException('');
     }
     trip.driver = { id: driverId };
@@ -55,7 +68,11 @@ export class TripsService {
   }
   public async cancel(tripId: number, driverId: number) {
     const trip = await this.getByOne(tripId);
-    if (trip.tripstatus !== TripStatus.CREATED) {
+    if (
+      !UserRole.ADMIN &&
+      !UserRole.DRIVER &&
+      trip.tripstatus !== TripStatus.CREATED
+    ) {
       throw new BadRequestException('');
     }
     trip.driver = { id: driverId };
@@ -64,7 +81,11 @@ export class TripsService {
   }
   public async start(tripId: number, driverId: number) {
     const trip = await this.getByOne(tripId);
-    if (trip.tripstatus !== TripStatus.ARRIVED) {
+    if (
+      !UserRole.ADMIN &&
+      !UserRole.DRIVER &&
+      trip.tripstatus !== TripStatus.ARRIVED
+    ) {
       throw new BadRequestException('');
     }
     trip.driver = { id: driverId };
@@ -73,7 +94,11 @@ export class TripsService {
   }
   public async end(tripId: number, driverId: number) {
     const trip = await this.getByOne(tripId);
-    if (trip.tripstatus !== TripStatus.STARTED) {
+    if (
+      !UserRole.ADMIN &&
+      !UserRole.DRIVER &&
+      trip.tripstatus !== TripStatus.STARTED
+    ) {
       throw new BadRequestException('');
     }
     trip.driver = { id: driverId };
